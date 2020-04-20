@@ -36,7 +36,7 @@ describe("Plugin", () => {
         chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost1");
     })
 
-    it("endpoint.https", async function(){
+    it("endpoint.https - httpConfig", async function(){
         let configData1 = {
             "endpoint":{
                 "http": {
@@ -55,6 +55,26 @@ describe("Plugin", () => {
         let plugin1: WebFassPlugin = new WebFassPlugin(core1);
         core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTPS);
+        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(9092);
+        chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost2");
+    })
+
+    it("endpoint.https - httpConfig whitout attr", async function(){
+        let configData1 = {
+            "endpoint":{
+                "http": {
+                    "port": 9092,
+                    "hostname": "localhost2",
+                    "httpConfig": {
+                    }
+                }
+            }
+        }
+
+        let core1 = new Core( new Config(configData1) );
+        let plugin1: WebFassPlugin = new WebFassPlugin(core1);
+        core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
+        chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);
         chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(9092);
         chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost2");
     })

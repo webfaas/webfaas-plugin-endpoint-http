@@ -9,32 +9,26 @@ WebFaaS Plugin for [node](http://nodejs.org).
 ### Config - Simple
 ```json
 {
-    "registry.npm": [
+    "endpoint.http": [
         {
-            "name": "[registry name]",
-            "url": "[url npm]"
+            "port": "[http port]"
         }
     ]
 }
 ```
 
+
 ### Config - Complete
 ```json
 {
-    "registry.npm": [
+    "endpoint.http": [
         {
-            "name": "[registry name]",
-            "url": "[url npm]",
-            "token": "[token npm]",
-            "slaveName": "[registry slave name]",
-            "http": {
-                "keepAlive": "true",
-                "rejectUnauthorized": "true",
-                "timeout":  100000,
-                "maxSockets": 2,
-                "key": "./crt/key.pem",
-                "cert": "./crt/public.pem",
-                "ca": "./crt/ca.pem"
+            "port": "[http port]",
+            "hostname": "[http hostname]",
+            "httpConfig": {
+                "ca": "[location ca]",
+                "cert": "[location cert]",
+                "pfx": "[location pfx]"
             }
         }
     ]
@@ -42,32 +36,8 @@ WebFaaS Plugin for [node](http://nodejs.org).
 ```
 
 ### Example
-```javascript
-"use strict";
-
-import { ModuleManager } from "@webfaas/webfaas-core";
-
-import { PackageRegistry } from "../lib/PackageRegistry";
-
-var moduleManager = new ModuleManager();
-moduleManager.getModuleManagerImport().getPackageStoreManager().getPackageRegistryManager().addRegistry("npm", "", new PackageRegistry());
-
-(async function(){
-    try {
-        var moduleObj: any = await moduleManager.getModuleManagerImport().import("uuid/v1", "3.4.0", undefined, "npm");
-        
-        if (moduleObj){
-            console.log("module loaded", moduleObj);
-            console.log("uuid => ", moduleObj());
-        }
-        else{
-            console.log("module not loaded");
-        }
-    }
-    catch (errTry) {
-        console.log("errExample: ", errTry);
-    }
-})();
+```shell
+curl -XPOST "http://localhost:8080/@registry1/math:multiply/1" -H "content-type:application/json" -d '{"x":2,"y":3}'
 ```
 
 ## License

@@ -52,11 +52,7 @@ describe("EndPointHTTPS - REST", () => {
         configEndPointHTTP.port = 9098;
         configEndPointHTTP.type = EndPointHTTPConfigTypeEnum.HTTPS;
         const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
-        const urlBase = "https://localhost:" + configEndPointHTTP.port;
-        let url: string;
-        let response: IClientHTTPResponse;
-        let responseData: any;
-
+        
         try {
             await endPointHTTP.start();
             throw new Error("Sucess");

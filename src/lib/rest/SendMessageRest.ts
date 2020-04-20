@@ -1,17 +1,24 @@
 import * as http from "http";
 import * as url from "url";
 
-import { Log, Core, LogLevelEnum, WebFaasError } from "@webfaas/webfaas-core";
+import { Log, Core, WebFaasError } from "@webfaas/webfaas-core";
 import { IMessage } from "@webfaas/webfaas-core/lib/MessageManager/IMessage";
 import { IMessageHeaders } from "@webfaas/webfaas-core/lib/MessageManager/IMessageHeaders";
 import { EndPointHTTP } from "../EndPointHTTP";
 import { MessageManager } from "@webfaas/webfaas-core/lib/MessageManager/MessageManager";
+
+const uuid_v1 = require("uuid/v1");
 
 interface moduleInfo{
     name: string;
     method: string;
     version: string;
     path: string;
+}
+
+interface authorizationInfo{
+    type: string;
+    token: string;
 }
 
 //[@scope]/[modulename]/[version]
@@ -28,11 +35,16 @@ export class SendMessageRest {
         this.log = endPointHTTP.getLog();
     }
 
-    parseString(value: string | null){
-        return value || "";
+    parseString(value: any): string{
+        if (typeof(value) === "string"){
+            return value;
+        }
+        else{
+            return "";
+        }
     }
 
-    extractModuleInfoFromContext(context: string): moduleInfo | null{
+    parseModuleInfo(context: string): moduleInfo | null{
         let result = {} as moduleInfo;
         let nameAndMethod: string;
         let version: string;
@@ -84,6 +96,26 @@ export class SendMessageRest {
         return result;
     }
 
+    parseAuthorizationInfo(value: string): authorizationInfo | null{
+        let result = {} as authorizationInfo;
+
+        if (value){
+            let authorizationArray = value.split(" ");
+            if (authorizationArray.length === 2){
+                result.type = authorizationArray[0].toLowerCase();
+                result.token = authorizationArray[1];
+            }
+            else{
+                return null;
+            }
+        }
+        else{
+            return null;
+        }
+        
+        return result;
+    }
+
     processRequest(request: http.IncomingMessage, response: http.ServerResponse, body: Buffer): void{
         let requestContentType = request.headers["content-type"] || "";
         let msg = {} as IMessage;
@@ -111,7 +143,7 @@ export class SendMessageRest {
         let urlString: string = decodeURI(request.url || "");
         let urlObj = url.parse(urlString, true);
         let context = this.parseString(urlObj.pathname).substring(1);
-        let moduleInfo: moduleInfo | null = this.extractModuleInfoFromContext(context);
+        let moduleInfo: moduleInfo | null = this.parseModuleInfo(context);
 
         if (moduleInfo){
             msg.header = {} as IMessageHeaders;
@@ -119,8 +151,9 @@ export class SendMessageRest {
             msg.header.name = moduleInfo.name;
             msg.header.method = moduleInfo.method;
             msg.header.version = this.messageManager.parseVersion(moduleInfo.version);
-            msg.header.messageID = (request.headers["X-Request-ID"] || "").toString();
-
+            msg.header.messageID = this.parseString(request.headers["X-Request-ID"]) || uuid_v1();
+            msg.header.authorization = this.parseAuthorizationInfo(this.parseString(request.headers["Authorization"]));
+            
             msg.header.http = {};
             msg.header.http.path = this.parseString(urlObj.path).substring(msg.header.name.length + 1);
             msg.header.http.method = request.method;
