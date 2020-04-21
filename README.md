@@ -40,6 +40,10 @@ WebFaaS Plugin for [node](http://nodejs.org).
 curl -XPOST "http://localhost:8080/@registry1/math:multiply/1" -H "content-type:application/json" -d '{"x":2,"y":3}'
 ```
 
+```shell
+curl -XPOST "http://localhost:8080/@webfaaslabs/math:sum/0" -H "content-type:application/json" -d '{"x":2,"y":3}' -v
+```
+
 ## License
 
 [MIT](LICENSE)

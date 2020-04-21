@@ -155,7 +155,7 @@ export class SendMessageRest {
             msg.header.authorization = this.parseAuthorizationInfo(this.parseString(request.headers["Authorization"]));
             
             msg.header.http = {};
-            msg.header.http.path = this.parseString(urlObj.path).substring(msg.header.name.length + 1);
+            msg.header.http.path = moduleInfo.path;
             msg.header.http.method = request.method;
             msg.header.http.headers = request.headers;
 

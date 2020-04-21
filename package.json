@@ -1,6 +1,6 @@
 {
   "name": "@webfaas/webfaas-plugin-endpoint-http",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "WebFaaS Framework - Plugin - Endpoint - HTTP",
   "main": "lib/index.js",
   "readmeFilename": "README.md",
