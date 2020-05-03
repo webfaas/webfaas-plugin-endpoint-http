@@ -95,6 +95,9 @@ export namespace PackageRegistryResponseMock{
             module.exports.multiplysync = function(event){
                 return {payload: event.payload.x * event.payload.y};
             }
+            module.exports.null = function(event){
+                return null;
+            }
             module.exports.errorasync = async function(event){
                 throw new Error("errorasync");
             }

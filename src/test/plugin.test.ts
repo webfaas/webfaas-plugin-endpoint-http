@@ -28,7 +28,9 @@ describe("Plugin", () => {
                 }
             }
         }
-        let core1 = new Core( new Config(configData1) );
+        let config = new Config();
+        config.read(configData1);
+        let core1 = new Core( config );
         let plugin1: WebFassPlugin = new WebFassPlugin(core1);
         core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);
@@ -51,7 +53,10 @@ describe("Plugin", () => {
             }
         }
 
-        let core1 = new Core( new Config(configData1) );
+        let config = new Config();
+        config.read(configData1);
+        let core1 = new Core( config );
+
         let plugin1: WebFassPlugin = new WebFassPlugin(core1);
         core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTPS);
@@ -71,7 +76,10 @@ describe("Plugin", () => {
             }
         }
 
-        let core1 = new Core( new Config(configData1) );
+        let config = new Config();
+        config.read(configData1);
+        let core1 = new Core( config );
+        
         let plugin1: WebFassPlugin = new WebFassPlugin(core1);
         core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);

@@ -49,14 +49,32 @@ describe("EndPointHTTP", () => {
     it("simulate error - onProcessHTTP", function(){
         const config = new EndPointHTTPConfig();
         const endPointHTTP = new EndPointHTTP(core, config);
-        const headers = endPointHTTP.buildHeaders("content1");
 
         try {
-            endPointHTTP.onProcessHTTP({} as any, {} as any);
+            endPointHTTP.onProcessHTTP({headers:{}} as any, {} as any);
             throw new Error("Sucess");
         }
         catch (errTry) {
             chai.expect(errTry.message).to.include("function");
+        }
+    })
+
+    it("simulate error - onProcessHTTP - request", function(){
+        const config = new EndPointHTTPConfig();
+        const endPointHTTP = new EndPointHTTP(core, config);
+        let request = {headers:{}} as any;
+        request.on = function(name: any, cb: any){
+            request[name] = cb;
+            return request;
+        }
+
+        try {
+            endPointHTTP.onProcessHTTP(request, {} as any);
+            request["end"]();
+            throw new Error("Sucess");
+        }
+        catch (errTry) {
+            chai.expect(errTry.message).to.include("is not a function");
         }
     })
 })

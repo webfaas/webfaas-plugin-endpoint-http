@@ -43,6 +43,31 @@ describe("EndPointHTTPS - REST", () => {
         await endPointHTTP.stop();
     })
 
+    it("/@registry1/math:sum/1 - without httpConfig", async function(){
+        const configEndPointHTTP = new EndPointHTTPConfig();
+        configEndPointHTTP.httpConfig = null;
+        
+        configEndPointHTTP.port = 9096;
+        configEndPointHTTP.type = EndPointHTTPConfigTypeEnum.HTTPS;
+        const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
+        const urlBase = "https://localhost:" + configEndPointHTTP.port;
+        let url: string;
+        let response: IClientHTTPResponse;
+        let responseData: any;
+        await endPointHTTP.start();
+
+        try {
+            url = `${urlBase}/@registry1/math:sum/1`;
+            response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
+            throw new Error("Sucess");
+        }
+        catch (errTry) {
+            chai.expect(errTry.message).to.include("SSL");
+        }
+
+        await endPointHTTP.stop();
+    })
+
     it("error - certificate", async function(){
         const configEndPointHTTP = new EndPointHTTPConfig();
         configEndPointHTTP.httpConfig = {};

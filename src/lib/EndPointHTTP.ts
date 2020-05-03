@@ -5,6 +5,7 @@ import { Log, LogLevelEnum, Core } from "@webfaas/webfaas-core";
 import { EndPointHTTPConfig, EndPointHTTPConfigTypeEnum } from "./EndPointHTTPConfig";
 import { LogCodeEnum } from "@webfaas/webfaas-core/lib/Log/ILog";
 import { SendMessageRest } from "./rest/SendMessageRest";
+import { SendMessageJsonRpc } from "./rest/SendMessageJsonRpc";
 
 export class EndPointHTTP {
     private core: Core;
@@ -12,6 +13,7 @@ export class EndPointHTTP {
     private log: Log;
     private server: http.Server | null = null;
     private sendMessageRest: SendMessageRest;
+    private sendMessageJsonRpc: SendMessageJsonRpc;
     
     constructor(core: Core, config: EndPointHTTPConfig){
         this.core = core;
@@ -21,6 +23,7 @@ export class EndPointHTTP {
         this.onProcessHTTP = this.onProcessHTTP.bind(this);
 
         this.sendMessageRest = new SendMessageRest(this);
+        this.sendMessageJsonRpc = new SendMessageJsonRpc(this);
     }
 
     buildHeaders(contentType?: string): http.OutgoingHttpHeaders{
@@ -52,13 +55,19 @@ export class EndPointHTTP {
     
     onProcessHTTP(request: http.IncomingMessage, response: http.ServerResponse): void{
         let bodyList: Array<any> = [];
+        let requestContentType = request.headers["content-type"] || "";
         try {
             request.on("data", function(chunk) {
                 bodyList.push(chunk);
             }).on("end", () => {
                 try {
                     let body: Buffer = Buffer.concat(bodyList);
-                    this.sendMessageRest.processRequest(request, response, body);
+                    if (requestContentType === "application/json-rpc"){
+                        this.sendMessageJsonRpc.processRequest(request, response, body);
+                    }
+                    else{
+                        this.sendMessageRest.processRequest(request, response, body);
+                    }
                 }
                 catch (errTry) {
                     this.writeEnd(response, 500, this.buildHeaders(), "Internal Server Error");
