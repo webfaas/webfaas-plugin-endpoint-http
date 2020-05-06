@@ -1,10 +1,9 @@
 import * as http from "http";
 import * as url from "url";
 
-import { Log, Core, MessageUtil } from "@webfaas/webfaas-core";
+import { Log, Core, MessageUtil, WebFaasError } from "@webfaas/webfaas-core";
 import { IMessage } from "@webfaas/webfaas-core/lib/MessageManager/IMessage";
 import { EndPointHTTP } from "../EndPointHTTP";
-import { IMessageError } from "@webfaas/webfaas-core/lib/Util/MessageUtil";
 
 const uuid_v1 = require("uuid/v1");
 
@@ -85,12 +84,12 @@ export class SendMessageRest {
                 }
                 this.endPointHTTP.writeEnd(response, statusCode, headers, chunk);
             }).catch((errSend)=>{
-                let msgError: IMessageError = MessageUtil.convertCodeErrorToHttp(errSend)
-                this.endPointHTTP.writeEnd(response, msgError.code, this.endPointHTTP.buildHeaders(), msgError.message); //msgError.detail
+                this.endPointHTTP.writeEnd(response, MessageUtil.convertErrorToCodeHttp(errSend), this.endPointHTTP.buildHeaders("application/json"), JSON.stringify(errSend));
             });
         }
         else{
-            this.endPointHTTP.writeEnd(response, 400, this.endPointHTTP.buildHeaders(), "Module name and version required");
+            let errValidate = new WebFaasError.ValidateError("0", "", "Module name and version required");
+            this.endPointHTTP.writeEnd(response, MessageUtil.convertErrorToCodeHttp(errValidate), this.endPointHTTP.buildHeaders("application/json"), JSON.stringify(errValidate));
         }
     }
 }

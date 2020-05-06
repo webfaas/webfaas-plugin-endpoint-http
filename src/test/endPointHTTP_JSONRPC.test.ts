@@ -15,7 +15,7 @@ const clientHTTP: ClientHTTP = new ClientHTTP(undefined, log);
 describe("EndPointHTTP - JSON RPC", () => {
     it("/@registry1/math:sum/1", async function(){
         const configEndPointHTTP = new EndPointHTTPConfig();
-        configEndPointHTTP.port = 7094;
+        configEndPointHTTP.port = 6040;
         const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
         const urlBase = "http://localhost:" + configEndPointHTTP.port;
         await endPointHTTP.start();

@@ -117,7 +117,6 @@ describe("SendMessageRest", () => {
         }
         endPointHTTP.writeEnd = function(response, statusCode, headers){;
             chai.expect(headers["content-type"]).to.eq("type1");
-            console.log("*****statusCode", statusCode);
         }
         sendMessageRest.processRequest({url: "/@registry1/math:sum/1", headers:{}} as any, {} as any, Buffer.from("AAA"));
     })

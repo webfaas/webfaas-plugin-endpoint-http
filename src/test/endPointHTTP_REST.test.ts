@@ -15,7 +15,7 @@ const clientHTTP: ClientHTTP = new ClientHTTP(undefined, log);
 describe("EndPointHTTP - REST", () => {
     it("/@registry1/math:sum/1", async function(){
         const configEndPointHTTP = new EndPointHTTPConfig();
-        configEndPointHTTP.port = 9094;
+        configEndPointHTTP.port = 6020;
         const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
         const urlBase = "http://localhost:" + configEndPointHTTP.port;
         let url: string;
@@ -35,7 +35,7 @@ describe("EndPointHTTP - REST", () => {
         response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
         chai.expect(response.statusCode).to.eq(404);
         responseData = response.data.toString();
-        chai.expect(responseData).to.include("NOT FOUND");
+        chai.expect(responseData).to.include("NotFoundError");
 
         //RETURN THROW
         url = `${urlBase}/@registry1/math:errorasync/1`;
@@ -47,7 +47,7 @@ describe("EndPointHTTP - REST", () => {
 
     it("/@registry1/math:sum/1 - with httpConfig", async function(){
         const configEndPointHTTP = new EndPointHTTPConfig();
-        configEndPointHTTP.port = 9095;
+        configEndPointHTTP.port = 6021;
         configEndPointHTTP.httpConfig = {};
         const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
         const urlBase = "http://localhost:" + configEndPointHTTP.port;
@@ -68,7 +68,7 @@ describe("EndPointHTTP - REST", () => {
         response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
         chai.expect(response.statusCode).to.eq(404);
         responseData = response.data.toString();
-        chai.expect(responseData).to.include("NOT FOUND");
+        chai.expect(responseData).to.include("NotFoundError");
 
         await endPointHTTP.stop();
     })

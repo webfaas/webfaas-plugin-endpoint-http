@@ -3,7 +3,7 @@ import * as http from "http";
 import { Log, Core, MessageUtil, WebFaasError } from "@webfaas/webfaas-core";
 import { IMessage } from "@webfaas/webfaas-core/lib/MessageManager/IMessage";
 import { EndPointHTTP } from "../EndPointHTTP";
-import { IMessageError, IJsonRpcRequest, JsonRpcErrorTypeEnum } from "@webfaas/webfaas-core/lib/Util/MessageUtil";
+import { IJsonRpcRequest, JsonRpcErrorTypeEnum } from "@webfaas/webfaas-core/lib/Util/MessageUtil";
 
 const uuid_v1 = require("uuid/v1");
 
@@ -26,8 +26,7 @@ export class SendMessageJsonRpc {
             payloadRequest = MessageUtil.parseJsonRpcRequest(body);
         }
         catch (errTryParse) {
-            let msgError: IMessageError = MessageUtil.convertCodeErrorToJsonRpc(errTryParse);
-            let responseJson = MessageUtil.parseJsonRpcResponseError(msgError.code, msgError.message);
+            let responseJson = MessageUtil.parseJsonRpcResponseError(MessageUtil.convertErrorToCodeJsonRpc(errTryParse), errTryParse);
             this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders(), JSON.stringify(responseJson));
             this.log.writeError("processRequest", errTryParse, undefined, __filename);
             return;
@@ -52,14 +51,13 @@ export class SendMessageJsonRpc {
                 }
                 this.endPointHTTP.writeEnd(response, statusCode, headers, JSON.stringify(responseJsonRpc));
             }).catch((errSend)=>{
-                let msgError: IMessageError = MessageUtil.convertCodeErrorToJsonRpc(errSend);
-                let responseJson = MessageUtil.parseJsonRpcResponseError(msgError.code, msgError.message);
+                let responseJson = MessageUtil.parseJsonRpcResponseError(MessageUtil.convertErrorToCodeJsonRpc(errSend), errSend);
                 this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders(), JSON.stringify(responseJson));
                 this.log.writeError("processRequest", errSend, undefined, __filename);
             });
         }
         else{
-            let responseJson = MessageUtil.parseJsonRpcResponseError(JsonRpcErrorTypeEnum.INVALID_REQUEST, "payload required");
+            let responseJson = MessageUtil.parseJsonRpcResponseError(JsonRpcErrorTypeEnum.INVALID_REQUEST, new WebFaasError.SecurityError(WebFaasError.SecurityErrorTypeEnum.PAYLOAD_INVALID, "empty payload"));
             this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders(), JSON.stringify(responseJson));
             this.log.writeError("processRequest", new Error("payload required"), undefined, __filename);
         }

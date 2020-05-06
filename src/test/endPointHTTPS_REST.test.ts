@@ -24,7 +24,7 @@ describe("EndPointHTTPS - REST", () => {
         configEndPointHTTP.httpConfig.key = fs.readFileSync(path.join(__dirname, "./data/crt/key.pem"));
         configEndPointHTTP.httpConfig.cert = fs.readFileSync(path.join(__dirname, "./data/crt/cert.pem"));
         
-        configEndPointHTTP.port = 9096;
+        configEndPointHTTP.port = 7020;
         configEndPointHTTP.type = EndPointHTTPConfigTypeEnum.HTTPS;
         const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
         const urlBase = "https://localhost:" + configEndPointHTTP.port;
@@ -47,7 +47,7 @@ describe("EndPointHTTPS - REST", () => {
         const configEndPointHTTP = new EndPointHTTPConfig();
         configEndPointHTTP.httpConfig = null;
         
-        configEndPointHTTP.port = 9096;
+        configEndPointHTTP.port = 7021;
         configEndPointHTTP.type = EndPointHTTPConfigTypeEnum.HTTPS;
         const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
         const urlBase = "https://localhost:" + configEndPointHTTP.port;
@@ -74,7 +74,7 @@ describe("EndPointHTTPS - REST", () => {
         configEndPointHTTP.httpConfig.key = fs.readFileSync(path.join(__dirname, "./data/crt/key.pem"));
         configEndPointHTTP.httpConfig.cert = Buffer.from("AA");
         
-        configEndPointHTTP.port = 9098;
+        configEndPointHTTP.port = 7022;
         configEndPointHTTP.type = EndPointHTTPConfigTypeEnum.HTTPS;
         const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
         

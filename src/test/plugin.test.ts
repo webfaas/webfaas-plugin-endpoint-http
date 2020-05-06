@@ -23,7 +23,7 @@ describe("Plugin", () => {
         let configData1 = {
             "endpoint":{
                 "http": {
-                    "port": 9090,
+                    "port": 6010,
                     "hostname": "localhost1"
                 }
             }
@@ -34,7 +34,7 @@ describe("Plugin", () => {
         let plugin1: WebFassPlugin = new WebFassPlugin(core1);
         core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);
-        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(9090);
+        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(6010);
         chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost1");
     })
 
@@ -42,7 +42,7 @@ describe("Plugin", () => {
         let configData1 = {
             "endpoint":{
                 "http": {
-                    "port": 9092,
+                    "port": 6011,
                     "hostname": "localhost2",
                     "httpConfig": {
                         ca: path.join(__dirname, "data", "crt", "cert.pem"),
@@ -60,7 +60,7 @@ describe("Plugin", () => {
         let plugin1: WebFassPlugin = new WebFassPlugin(core1);
         core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTPS);
-        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(9092);
+        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(6011);
         chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost2");
     })
 
@@ -68,7 +68,7 @@ describe("Plugin", () => {
         let configData1 = {
             "endpoint":{
                 "http": {
-                    "port": 9092,
+                    "port": 6012,
                     "hostname": "localhost2",
                     "httpConfig": {
                     }
@@ -83,7 +83,7 @@ describe("Plugin", () => {
         let plugin1: WebFassPlugin = new WebFassPlugin(core1);
         core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);
-        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(9092);
+        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(6012);
         chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost2");
     })
 })
