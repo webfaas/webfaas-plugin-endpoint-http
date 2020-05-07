@@ -5,6 +5,7 @@ import { Log, LogLevelEnum, Core, ClientHTTP, IClientHTTPResponse } from "@webfa
 import { EndPointHTTP } from "../lib/EndPointHTTP";
 import { EndPointHTTPConfig, EndPointHTTPConfigTypeEnum } from "../lib/EndPointHTTPConfig";
 import { PackageRegistryMock } from "./mocks/PackageRegistryMock";
+import WebFassPlugin from "../lib/WebFassPlugin";
 
 const core = new Core();
 const log = new Log();
@@ -69,6 +70,28 @@ describe("EndPointHTTP - REST", () => {
         chai.expect(response.statusCode).to.eq(404);
         responseData = response.data.toString();
         chai.expect(responseData).to.include("NotFoundError");
+
+        await endPointHTTP.stop();
+    })
+
+    it("route1 -> @registry1/math:sum/1", async function(){
+        const configEndPointHTTP = new EndPointHTTPConfig();
+        configEndPointHTTP.port = 6022;
+        const endPointHTTP = new EndPointHTTP(core, configEndPointHTTP);
+        const urlBase = "http://localhost:" + configEndPointHTTP.port;
+        let url: string;
+        let response: IClientHTTPResponse;
+        let responseData: any;
+        await endPointHTTP.start();
+
+        endPointHTTP.getConfig().route["/route1"] = "/@registry1/math:sum/1";
+
+        //SUCESS
+        url = `${urlBase}/route1`;
+        response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
+        chai.expect(response.statusCode).to.eq(200);
+        responseData = JSON.parse(response.data.toString());
+        chai.expect(responseData).to.eq(5);
 
         await endPointHTTP.stop();
     })

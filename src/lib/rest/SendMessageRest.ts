@@ -1,8 +1,7 @@
 import * as http from "http";
 import * as url from "url";
 
-import { Log, Core, MessageUtil, WebFaasError } from "@webfaas/webfaas-core";
-import { IMessage } from "@webfaas/webfaas-core/lib/MessageManager/IMessage";
+import { Log, Core, MessageUtil, WebFaasError, IMessage } from "@webfaas/webfaas-core";
 import { EndPointHTTP } from "../EndPointHTTP";
 
 const uuid_v1 = require("uuid/v1");
@@ -43,6 +42,10 @@ export class SendMessageRest {
         }
 
         let urlString: string = decodeURI(request.url || "");
+        let route = this.endPointHTTP.getConfig().route[urlString];
+        if (route){
+            urlString = route;
+        }
         let urlObj = url.parse(urlString, true);
         
         msg = MessageUtil.parseMessageByUrlPath(urlObj.pathname || "", "", payload, request.method, request.headers);

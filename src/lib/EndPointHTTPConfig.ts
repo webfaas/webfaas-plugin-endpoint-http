@@ -5,11 +5,16 @@ export enum EndPointHTTPConfigTypeEnum{
     HTTPS="HTTPS"
 }
 
+export interface EndPointHTTPConfigRoute{
+    [path: string]: string
+}
+
 export class EndPointHTTPConfig  {
     port: number
     hostname?: string
     type: EndPointHTTPConfigTypeEnum
     httpConfig: ServerOptions | null
+    route: EndPointHTTPConfigRoute = {}
 
     constructor(port?: number, hostname?: string, type?: EndPointHTTPConfigTypeEnum, httpConfig?: ServerOptions){
         if (port){

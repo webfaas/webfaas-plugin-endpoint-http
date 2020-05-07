@@ -2,7 +2,7 @@ import * as path from "path";
 
 import * as chai from "chai";
 
-import { Core, LogLevelEnum } from "@webfaas/webfaas-core";
+import { Core, LogLevelEnum, EventManager, EventManagerEnum } from "@webfaas/webfaas-core";
 
 import WebFassPlugin from "../lib/WebFassPlugin";
 import { Config } from "@webfaas/webfaas-core/lib/Config/Config";
@@ -85,5 +85,46 @@ describe("Plugin", () => {
         chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);
         chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(6012);
         chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost2");
+    })
+
+    it("endpoint.https - CONFIG_RELOAD", async function(){
+        let configData1 = {
+            "endpoint":{
+                "http": {
+                    "port": 6013,
+                    "hostname": "localhost3",
+                    "route": {}
+                }
+            }
+        }
+
+        let configData2 = {
+            "endpoint":{
+                "http": {
+                    "port": 6013,
+                    "hostname": "localhost3",
+                    "route": {"/route1":"/path1"}
+                }
+            }
+        }
+
+        let config = new Config();
+        config.read(configData1);
+        let core1 = new Core( config );
+        
+        let plugin1: WebFassPlugin = new WebFassPlugin(core1);
+        core1.getLog().changeCurrentLevel(LogLevelEnum.OFF);
+        chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);
+        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(6013);
+        chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost3");
+        chai.expect(plugin1.endPointHttp.getConfig().route["/route1"]).to.undefined;
+
+        config.read(configData2);
+        EventManager.emit(EventManagerEnum.CONFIG_RELOAD);
+
+        chai.expect(plugin1.endPointHttp.getConfig().type).to.eq(EndPointHTTPConfigTypeEnum.HTTP);
+        chai.expect(plugin1.endPointHttp.getConfig().port).to.eq(6013);
+        chai.expect(plugin1.endPointHttp.getConfig().hostname).to.eq("localhost3");
+        chai.expect(plugin1.endPointHttp.getConfig().route["/route1"]).to.eq("/path1");
     })
 })

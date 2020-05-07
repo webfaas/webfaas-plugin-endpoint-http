@@ -1,10 +1,11 @@
 import * as fs from "fs";
-import { Core, IPlugin } from "@webfaas/webfaas-core";
+import { Core, IPlugin, EventManager, EventManagerEnum } from "@webfaas/webfaas-core";
 import { EndPointHTTPConfig, EndPointHTTPConfigTypeEnum } from "./EndPointHTTPConfig";
 import { EndPointHTTP } from "./EndPointHTTP";
 
 export default class WebFassPlugin implements IPlugin {
     endPointHttp: EndPointHTTP
+    core: Core;
     
     async startPlugin(core: Core) {
         await this.endPointHttp.start();
@@ -18,7 +19,14 @@ export default class WebFassPlugin implements IPlugin {
         return fs.readFileSync(file);
     }
 
+    onConfigReload(){
+        let config = this.endPointHttp.getConfig();
+        config.route = this.core.getConfig().get("endpoint.http.route", {});
+    }
+
     constructor(core: Core){
+        this.core = core;
+        
         let itemConfig: any = core.getConfig().get("endpoint.http", {});
 
         let config = new EndPointHTTPConfig();
@@ -26,6 +34,8 @@ export default class WebFassPlugin implements IPlugin {
         config.port = itemConfig.port || 8080;
         config.hostname = itemConfig.hostname;
         config.httpConfig = itemConfig.httpConfig || null;
+
+        config.route = this.core.getConfig().get("endpoint.http.route", {});
 
         if (config.httpConfig){
             if (config.httpConfig.ca){
@@ -43,5 +53,8 @@ export default class WebFassPlugin implements IPlugin {
         }
 
         this.endPointHttp = new EndPointHTTP(core, config);
+
+        this.onConfigReload = this.onConfigReload.bind(this);
+        EventManager.addListener(EventManagerEnum.CONFIG_RELOAD, this.onConfigReload);
     }
 }
