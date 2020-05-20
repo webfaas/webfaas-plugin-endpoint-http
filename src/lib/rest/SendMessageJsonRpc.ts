@@ -5,7 +5,7 @@ import { IMessage } from "@webfaas/webfaas-core/lib/MessageManager/IMessage";
 import { EndPointHTTP } from "../EndPointHTTP";
 import { IJsonRpcRequest, JsonRpcErrorTypeEnum } from "@webfaas/webfaas-core/lib/Util/MessageUtil";
 
-const uuid_v1 = require("uuid/v1");
+import { v1 as uuid_v1 } from "uuid";
 
 export class SendMessageJsonRpc {
     private endPointHTTP: EndPointHTTP;
@@ -27,7 +27,7 @@ export class SendMessageJsonRpc {
         }
         catch (errTryParse) {
             let responseJson = MessageUtil.parseJsonRpcResponseError(MessageUtil.convertErrorToCodeJsonRpc(errTryParse), errTryParse);
-            this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders(), JSON.stringify(responseJson));
+            this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders("application/json-rpc"), JSON.stringify(responseJson));
             this.log.writeError("processRequest", errTryParse, undefined, __filename);
             return;
         }
@@ -52,13 +52,13 @@ export class SendMessageJsonRpc {
                 this.endPointHTTP.writeEnd(response, statusCode, headers, JSON.stringify(responseJsonRpc));
             }).catch((errSend)=>{
                 let responseJson = MessageUtil.parseJsonRpcResponseError(MessageUtil.convertErrorToCodeJsonRpc(errSend), errSend);
-                this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders(), JSON.stringify(responseJson));
+                this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders("application/json-rpc"), JSON.stringify(responseJson));
                 this.log.writeError("processRequest", errSend, undefined, __filename);
             });
         }
         else{
             let responseJson = MessageUtil.parseJsonRpcResponseError(JsonRpcErrorTypeEnum.INVALID_REQUEST, new WebFaasError.SecurityError(WebFaasError.SecurityErrorTypeEnum.PAYLOAD_INVALID, "empty payload"));
-            this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders(), JSON.stringify(responseJson));
+            this.endPointHTTP.writeEnd(response, 200, this.endPointHTTP.buildHeaders("application/json-rpc"), JSON.stringify(responseJson));
             this.log.writeError("processRequest", new Error("payload required"), undefined, __filename);
         }
     }

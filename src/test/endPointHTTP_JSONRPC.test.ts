@@ -28,6 +28,7 @@ describe("EndPointHTTP - JSON RPC", () => {
         let response1 = await clientHTTP.request(urlBase, "POST", Buffer.from(JSON.stringify(msgRequest1)), {"content-type": "application/json-rpc"});
         let responseData1 = JSON.parse(response1.data.toString());
         chai.expect(response1.statusCode).to.eq(200);
+        chai.expect(response1.headers["content-type"]).to.eq("application/json-rpc");
         chai.expect(responseData1.id).to.eq(msgRequest1.id);
         chai.expect(responseData1.result).to.eq(5);
 
@@ -38,18 +39,21 @@ describe("EndPointHTTP - JSON RPC", () => {
         let response2 = await clientHTTP.request(urlBase, "POST", Buffer.from(JSON.stringify(msgRequest2)), {"content-type": "application/json-rpc"});
         let responseData2 = JSON.parse(response2.data.toString());
         chai.expect(response2.statusCode).to.eq(200);
+        chai.expect(response2.headers["content-type"]).to.eq("application/json-rpc");
         chai.expect(responseData2.error.code).to.eq(-32601);
 
         //ERROR - PARSE
         let response3 = await clientHTTP.request(urlBase, "POST", Buffer.from("AAA---"), {"content-type": "application/json-rpc"});
         let responseData3 = JSON.parse(response3.data.toString());
         chai.expect(response3.statusCode).to.eq(200);
+        chai.expect(response3.headers["content-type"]).to.eq("application/json-rpc");
         chai.expect(responseData3.error.code).to.eq(-32600);
 
         //ERROR - MSG NULL
         let response4 = await clientHTTP.request(urlBase, "POST", Buffer.from('{"method":"method1"}') as any, {"content-type": "application/json-rpc"});
         let responseData4 = JSON.parse(response4.data.toString());
         chai.expect(response4.statusCode).to.eq(200);
+        chai.expect(response4.headers["content-type"]).to.eq("application/json-rpc");
         chai.expect(responseData4.error.code).to.eq(-32600);
 
         //SUCESS - RETURN NULL
@@ -60,6 +64,7 @@ describe("EndPointHTTP - JSON RPC", () => {
         let response5 = await clientHTTP.request(urlBase, "POST", Buffer.from(JSON.stringify(msgRequest5)), {"content-type": "application/json-rpc"});
         let responseData5 = JSON.parse(response5.data.toString());
         chai.expect(response5.statusCode).to.eq(200);
+        chai.expect(response5.headers["content-type"]).to.eq("application/json-rpc");
         chai.expect(responseData5.id).to.eq(msgRequest5.id);
         chai.expect(responseData5.result).to.null;
 
@@ -71,6 +76,7 @@ describe("EndPointHTTP - JSON RPC", () => {
         let response6 = await clientHTTP.request(urlBase, "POST", Buffer.from(JSON.stringify(msgRequest6)), {"content-type": "application/json-rpc"});
         let responseData6 = JSON.parse(response6.data.toString());
         chai.expect(response6.statusCode).to.eq(200);
+        chai.expect(response6.headers["content-type"]).to.eq("application/json-rpc");
         chai.expect(responseData6.error.code).to.eq(-32000);
 
         await endPointHTTP.stop();

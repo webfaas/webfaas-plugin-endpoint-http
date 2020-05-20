@@ -28,6 +28,7 @@ describe("EndPointHTTP - REST", () => {
         url = `${urlBase}/@registry1/math:sum/1`;
         response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
         chai.expect(response.statusCode).to.eq(200);
+        chai.expect(response.headers["content-type"]).to.eq("application/json");
         responseData = JSON.parse(response.data.toString());
         chai.expect(responseData).to.eq(5);
 
@@ -35,6 +36,7 @@ describe("EndPointHTTP - REST", () => {
         url = `${urlBase}/@registry1/math22:sum/1`;
         response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
         chai.expect(response.statusCode).to.eq(404);
+        chai.expect(response.headers["content-type"]).to.eq("application/json");
         responseData = response.data.toString();
         chai.expect(responseData).to.include("NotFoundError");
 
@@ -61,6 +63,7 @@ describe("EndPointHTTP - REST", () => {
         url = `${urlBase}/@registry1/math:sum/1`;
         response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
         chai.expect(response.statusCode).to.eq(200);
+        chai.expect(response.headers["content-type"]).to.eq("application/json");
         responseData = JSON.parse(response.data.toString());
         chai.expect(responseData).to.eq(5);
 
@@ -68,6 +71,7 @@ describe("EndPointHTTP - REST", () => {
         url = `${urlBase}/@registry1/math22:sum/1`;
         response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
         chai.expect(response.statusCode).to.eq(404);
+        chai.expect(response.headers["content-type"]).to.eq("application/json");
         responseData = response.data.toString();
         chai.expect(responseData).to.include("NotFoundError");
 
@@ -90,6 +94,7 @@ describe("EndPointHTTP - REST", () => {
         url = `${urlBase}/route1`;
         response = await clientHTTP.request(url, "POST", Buffer.from(JSON.stringify({x:2,y:3})), {"content-type": "application/json"});
         chai.expect(response.statusCode).to.eq(200);
+        chai.expect(response.headers["content-type"]).to.eq("application/json");
         responseData = JSON.parse(response.data.toString());
         chai.expect(responseData).to.eq(5);
 

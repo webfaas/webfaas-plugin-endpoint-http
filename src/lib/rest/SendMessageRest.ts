@@ -4,7 +4,7 @@ import * as url from "url";
 import { Log, Core, MessageUtil, WebFaasError, IMessage } from "@webfaas/webfaas-core";
 import { EndPointHTTP } from "../EndPointHTTP";
 
-const uuid_v1 = require("uuid/v1");
+import { v1 as uuid_v1 } from "uuid";
 
 export class SendMessageRest {
     private endPointHTTP: EndPointHTTP;
