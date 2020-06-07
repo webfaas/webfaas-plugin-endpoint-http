@@ -13,6 +13,11 @@ WebFaaS Plugin for [node](http://nodejs.org).
         {
             "port": "[http port]"
         }
+    ],
+    "endpoint.https": [
+        {
+            "port": "[https port]"
+        }
     ]
 }
 ```
@@ -24,11 +29,18 @@ WebFaaS Plugin for [node](http://nodejs.org).
     "endpoint.http": [
         {
             "port": "[http port]",
-            "hostname": "[http hostname]",
+            "hostname": "[http hostname]"
+        }
+    ],
+    "endpoint.https": [
+        {
+            "port": "[https port]",
+            "hostname": "[https hostname]",
             "httpConfig": {
                 "ca": "[location ca]",
                 "cert": "[location cert]",
-                "pfx": "[location pfx]"
+                "pfx": "[location pfx]",
+                "passphrase": "[passphrase]"
             }
         }
     ]
@@ -43,6 +55,9 @@ curl -XPOST "http://localhost:8080/@registry1/math:multiply/1" -H "content-type:
 ```shell
 curl -XPOST "http://localhost:8080/@webfaaslabs/math:sum/0" -H "content-type:application/json" -d '{"x":2,"y":3}' -v
 ```
+
+### DOCS
+* https://www.ibm.com/support/knowledgecenter/SSMNED_5.0.0/com.ibm.apic.cmc.doc/task_apionprem_gernerate_self_signed_openSSL.html
 
 ## License
 
